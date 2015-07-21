@@ -1,0 +1,3 @@
+#!/bin/sh
+python setupAS.py build_ext --inplace
+python setupNetwork.py build_ext --inplace

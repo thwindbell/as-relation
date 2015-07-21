@@ -6,7 +6,7 @@ import sys
 if __name__ == '__main__':
   lines = []
   mapping = {}
-  seq = 1
+  seq = 0
 
   for line in sys.stdin:
     line = line.replace('\n', '')

@@ -6,6 +6,7 @@ import collections
 import sys
 import numpy as np
 import numpy.random as random
+import time
 
 def logToCount(logList, countList, MAX_COUNT, STEP=1000):
   timestamps = []
@@ -19,23 +20,15 @@ def logToCount(logList, countList, MAX_COUNT, STEP=1000):
     index = int(t/STEP)
     countList[index] += 1
 
+start = time.time()
+
 myNet = Network.Network()
-myNet.loadRelationFile('./topology/dataset_30a.txt')
+myNet.loadRelationFile('./topology/dataset_100a.txt')
 myNet.searchTopAS()
 myNet.exchangeRoutingTable()
 myNet.distributeNetAddr()
 
-argv = sys.argv
-if len(argv) != 5:
-  print "Usage: python TPFPSimulator.py attackOutputDir noiseOutputDir burstOutputDir LoopCount\n"
-  sys.exit(1)
-attackOutputDir = argv[1]
-noiseOutputDir = argv[2]
-burstOutputDir = argv[3]
-LOOP_COUNT = int(argv[4])
-
 """
-
 for i in range(LOOP_COUNT):
   # 100台のボットと100台のデコイをランダムに配置してtracerouteを実行
   botCounts   = collections.defaultdict(int)
@@ -78,9 +71,9 @@ for i in range(LOOP_COUNT):
       line = "%d\n" % c
       outputFile.write(line)
   myNet.clearASLog()
-
+"""
 # 各ネットワークから一定の正規確率でtracerouteを実行
-for i in range(LOOP_COUNT):
+for i in range(100):
   for net in myNet.as_list.values():
     noiseCounts = np.random.poisson(80, 300)
     for j in range(0, len(noiseCounts)):
@@ -93,6 +86,7 @@ for i in range(LOOP_COUNT):
         elapsed = myNet.traceroute(srcAddr, dstAddr, startTime)
 
   # 各ASのログを保存
+  """
   for node in myNet.as_list.values():
     as_number = node.as_number
     countList = []
@@ -103,9 +97,9 @@ for i in range(LOOP_COUNT):
       line = "%d\n" % c
       outputFile.write(line)
   myNet.clearASLog()
+  """
 
 """
-
 # 各ネットワークからランダムな時間に1度バースト的なtracerouteを実行
 for i in range(LOOP_COUNT):
   for net in myNet.as_list.values():
@@ -138,5 +132,7 @@ for i in range(LOOP_COUNT):
       line = "%d\n" % c
       outputFile.write(line)
   myNet.clearASLog()
+"""
 
-
+elapsed = time.time() - start
+print "%f[sec]" % (start)
