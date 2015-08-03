@@ -39,7 +39,7 @@ for i in range(1):
     for j in range(0, len(noiseCounts)):
       startTime = j * 1000
       for k in range(noiseCounts[j]):
-        dstNet = random.randint(1, 30 + 1)
+        dstNet = random.randint(1, 100 + 1)
         dstHost = random.randint(2, 254 + 1)
         dstAddr = dstNet << 16 | dstHost
         srcAddr = net.networkAddress | 0x02
