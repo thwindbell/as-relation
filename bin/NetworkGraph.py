@@ -34,7 +34,7 @@ def drawGraph(filename):
   transit = [(u,v) for (u,v,d) in g.edges(data=True) 
       if d['weight'] > 0.5]
   peer = [(u,v) for (u,v,d) in g.edges(data=True) 
-      f d['weight'] <= 0.5]
+      if d['weight'] <= 0.5]
   pylab.figure(figsize=(4, 4))
 
   # pos = nx.spring_layout(g)
@@ -50,4 +50,4 @@ def drawGraph(filename):
   pylab.savefig(MyConf.TEMP + "network.png")
   pylab.show()
 
-drawGraph(MyConf.TOPOLOGY + "testtopo.txt")
+drawGraph(MyConf.BA + "ba100-1")

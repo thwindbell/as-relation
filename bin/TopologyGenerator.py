@@ -41,16 +41,49 @@ def waxman(n, alpha=0.4, beta=0.1):
       g = None
   return g
 
-def writeGraphToFile(g, filename):
-  path = MyConf.TOPOLOGY + filename
+def writeGraphToFile(g, path):
+  lines = []
+  mapping = {}
+  seq = 1
+
+  for e in g.edges_iter():
+    if e[0] not in mapping:
+      mapping[e[0]] = seq
+      seq += 1
+    if e[1] not in mapping:
+      mapping[e[1]] = seq
+      seq += 1
+    line = "%d|%d|0\n" % (mapping[e[0]], mapping[e[1]])
+    lines.append(line)
+  
   outputFile = open(path, "w")
   str = "# size = %d\n" % len(g.nodes())
   outputFile.write(str)
-  for e in g.edges_iter(): 
-    str = "%d|%d|0\n" % (e[0], e[1])
-    outputFile.write(str)
+  for line in lines: 
+    outputFile.write(line)
 
 if __name__ == '__main__':
-  g = barabasi_albert(10, 2)
+  g = waxman(100, 0.2, 0.2)
   if (g != None):
-    writeGraphToFile(g, "testtopo.txt")
+    writeGraphToFile(g, MyConf.WAXMAN + "waxman100-0.2-0.2")
+  else:
+    print "The graph is not connected."
+
+  g = waxman(1000, 0.2, 0.2)
+  if (g != None):
+    writeGraphToFile(g, MyConf.WAXMAN + "waxman1000-0.2-0.2")
+  else:
+    print "The graph is not connected."
+  
+  g = barabasi_albert(100, 1)
+  if (g != None):
+    writeGraphToFile(g, MyConf.BA + "ba100-1")
+  else:
+    print "The graph is not connected."
+
+  g = barabasi_albert(1000, 1)
+  if (g != None):
+    writeGraphToFile(g, MyConf.BA + "ba1000-1")
+  else:
+    print "The graph is not connected."
+
