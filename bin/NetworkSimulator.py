@@ -10,16 +10,16 @@ import MyConf
 argv = sys.argv
 argc = len(argv)
 
-if argc < 7:
-  print "Usage : python NetworkSimulator.py topologyFile outputDir loopCount numberOfAS numberOfBot numberOfDecoyServer"
+if argc < 6:
+  print "Usage : python NetworkSimulator.py topology_file env_dir number_of_as number_of_bot number_of_decoy"
   sys.exit(0)
 
+LOOP_COUNT = 100
 TOPOLOGY_FILE = MyConf.TOPOLOGY + argv[1]
 OUTPUT_DIR = MyConf.ENV + argv[2] + "/attack_file"
-LOOP_COUNT = int(argv[3])
-NUMBER_OF_AS = int(argv[4])
-NUMBER_OF_BOT = int(argv[5])
-NUMBER_OF_DECOY = int(argv[6])
+NUMBER_OF_AS = int(argv[3])
+NUMBER_OF_BOT = int(argv[4])
+NUMBER_OF_DECOY = int(argv[5])
 
 myNet = Network.Network()
 myNet.loadRelationFile(TOPOLOGY_FILE)

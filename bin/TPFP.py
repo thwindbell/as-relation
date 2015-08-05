@@ -9,8 +9,15 @@ import MyConf
 argv = sys.argv
 argc = len(argv)
 
-if argc != 10:
-  print "Usage : python TPFP.py "
+if argc < 3:
+  print "Usage : python TPFP.py env_dir number_of_as"
+  sys.exit(0)
+
+LOOP_COUNT = 100
+ENV_DIR = MyConf.ENV + argv[1]
+NUMBER_OF_AS = int(argv[2])
+
+lambdaList = {10, 100, 1000, 10000}
 
 thresholdList = []
 for i in range(200):
@@ -21,23 +28,16 @@ TPList = {}
 FPList = {}
 optimalThreshold = {}
 
-NODE_NUM = 0
-for line in open('./degree/degree_1000.txt', 'r'):
-  NODE_NUM += 1
 
-LOOP = 100
-
-lambdaList = {10, 100, 1000, 10000}
-
-for as_number in range(1, NODE_NUM+1):
+for as_number in range(1, NUMBER_OF_AS+1):
   for l in lambdaList:
     FPList[as_number] = collections.defaultdict(float)
     TPList[as_number] = collections.defaultdict(float)
-    for i in range(LOOP):
+    for i in range(LOOP_COUNT):
       event = Event.Event()
-      attackFile = "../attack_data/node1000/%05d-%04d.txt" % (as_number, i)
+      attackFile = ENV_DIR + "/attack_file/%05d-%04d.txt" % (as_number, i)
       event.loadAttack(attackFile)
-      noiseFile = "../random_noise/lambda_%05d-%04d" % (l, i)
+      noiseFile = MyConf.RANDOM_NOISE + "/lambda_%05d-%04d.txt" % (l, i)
       event.loadNoiseWithLearning(noiseFile, 300)
       event.calcTotal()
       event.calcTotalScore(useLearningData = True)
@@ -55,12 +55,12 @@ for as_number in range(1, NODE_NUM+1):
     TPForPlot = []
     FPForPlot = []
     for th in thresholdList:
-      TPList[as_number][th] /= float(LOOP)
-      FPList[as_number][th] /= float(LOOP)
+      TPList[as_number][th] /= float(LOOP_COUNT)
+      FPList[as_number][th] /= float(LOOP_COUNT)
       TPForPlot.append(TPList[as_number][th])
       FPForPlot.append(FPList[as_number][th])
 
-    fileName = "./node1000/lambda%05d/%05d.txt" % (l, as_number)
+    fileName = ENV_DIR + "/threshold/lambda%05d-as%05d.txt" % (l, as_number)
     outputFile = open(fileName, 'w')
     for i in range(len(thresholdList)):
       th = thresholdList[i]
