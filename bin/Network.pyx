@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 # -*- coding: utf-8 -*-
 
 import AS
@@ -19,6 +19,8 @@ def logToCount(logList, countList, int MAX_COUNT, int STEP=1000):
     countList.append(0)
   for t in timestamps:
     index = int(t/STEP)
+    if index >= MAX_COUNT:
+      return
     countList[index] += 1
 
 cdef class Network:
@@ -30,7 +32,8 @@ cdef class Network:
     self.as_dict = {}
     self.top_as_numbers = []
 
-  def loadRelationFile(self, filename):
+  def loadRelationFile(self, filename, calculatePath=False):
+    G = nx.Graph()
     for line in open(filename, 'r'):
       if line.startswith('#'):
         continue  # コメント行
@@ -43,8 +46,10 @@ cdef class Network:
       connection_type = int(para[2])
       if node1 not in self.as_dict:
         self.as_dict[node1] = AS.AS(node1)
+        G.add_node(node1)
       if node2 not in self.as_dict:
         self.as_dict[node2] = AS.AS(node2)
+        G.add_node(node1)
 
       if (connection_type == -1):
         # transit connection, node1 provide node2
@@ -59,6 +64,23 @@ cdef class Network:
         peer2 = self.as_dict[node2]
         peer1.peerNodes[peer2.as_number] = peer2
         peer2.peerNodes[peer1.as_number] = peer1
+      G.add_edge(node1, node2)
+
+    if calculatePath==True:
+      paths = nx.shortest_path(G)
+      node1 = None
+      node2 = None
+      src = 0
+      dst = 0
+      path = None
+      for src in sorted(paths.keys()):
+        for dst in sorted(paths[src].keys()):
+          path = paths[src][dst]
+          if (src==dst or len(path)<2):
+            continue
+          else:
+            srcNode = self.as_dict[src]
+            srcNode.customerTable[dst] = (path[1], len(path))
 
     return len(self.as_dict)
 

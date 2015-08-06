@@ -22,10 +22,13 @@ NUMBER_OF_BOT = int(argv[4])
 NUMBER_OF_DECOY = int(argv[5])
 
 myNet = Network.Network()
-myNet.loadRelationFile(TOPOLOGY_FILE)
-myNet.searchTopAS()
-myNet.exchangeRoutingTable()
+myNet.loadRelationFile(TOPOLOGY_FILE, True)
+# myNet.searchTopAS()
+# myNet.exchangeRoutingTable()
 myNet.distributeNetAddr()
+# for as_number in sorted(myNet.as_dict.keys()):
+  # node = myNet.as_dict[as_number]
+  # node.toString()
 
 for i in range(LOOP_COUNT):
   # 100台のボットと100台のデコイをランダムに配置してtracerouteを実行
